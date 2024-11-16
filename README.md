@@ -1,6 +1,15 @@
-# Welcome to your Expo app 👋
+# Welcome to Routery Expo app
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an application that can optimize your route based on your location and list of your destinations.
+
+App structure:
+
+- AddressInput: For adding new addresses.
+- AddressList: Displays the list of added addresses.
+- OptimizeButton: Triggers the optimization process.
+- MapViewComponent: Displays a map with markers for each address.
+- googleApiUtils: Contains utility functions for fetching geolocation data and calculating optimized routes.
+- This structure separates concerns into specific components, making your app easier to maintain and extend.
 
 ## Get started
 
