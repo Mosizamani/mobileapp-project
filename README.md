@@ -8,6 +8,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```bash
    npm install
+   npm install @react-native-google-signin/google-signin 
+   npx expo install react-native-maps
+   npm install axios
    ```
 
 2. Start the app
