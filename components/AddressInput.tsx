@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { View, TextInput, Button, StyleSheet, Keyboard } from "react-native"
+import { View, TextInput, Button, StyleSheet, Keyboard, FlatList, TouchableOpacity, Text } from "react-native"
 
 
 type AddressInputProps = {
@@ -8,13 +8,42 @@ type AddressInputProps = {
 
 export default function AddressInput({ onAddAddress }: AddressInputProps) {
   const [address, setAddress] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+
+  const GOOGLE_PLACES_API_KEY = "AIzaSyCahYAqH9bRIufClX3irVl7UqSitCFDsC8"
+
+  const fetchSuggestions = async (input: string) => {
+    if (input.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_PLACES_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      // Extract address predictions
+      const predictions = data.predictions.map((prediction: any) => prediction.description);
+      setSuggestions(predictions);
+    } catch (error) {
+      console.error("Error fetching autocomplete suggestions:", error);
+    }
+  }
 
   const handleAddAddress = () => {
     if(address.trim()) {
       onAddAddress(address)
       setAddress('')
+      setSuggestions([])
       Keyboard.dismiss()
     }
+  }
+
+  const handleSelectSuggestion = (selectedAddress: string) => {
+    setAddress(selectedAddress);
+    setSuggestions([]);
   }
 
   return (
@@ -22,9 +51,24 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
       <TextInput
         placeholder="Enter address"
         value={address}
-        onChangeText={setAddress}
+        onChangeText={(text) => {
+          setAddress(text);
+          fetchSuggestions(text);
+        }}
         style={styles.input}
       />
+      {suggestions.length > 0 && (
+          <FlatList
+            data={suggestions}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleSelectSuggestion(item)}>
+                <Text style={styles.suggestion}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={styles.suggestionsContainer}
+          />
+        )}
       <Button title="Add Address" onPress={handleAddAddress} disabled={!address.trim()} />
     </View>
   )
@@ -32,6 +76,34 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
 
 
 const styles = StyleSheet.create({
-  container: { flexDirection: "row", margin: 10 },
-  input: { flex: 1, borderBottomWidth: 1, marginRight: 10 },
+  container: { 
+    flexDirection: "row", 
+    margin: 10,
+  },
+  input: { 
+    flex: 1, 
+    borderBottomWidth: 0.2, 
+    marginRight: 10, 
+    padding: 5,
+    borderBottomColor: "#ccc",
+    color: "grey"
+
+  },
+  suggestionsContainer: {
+    position: "absolute",
+    top: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    zIndex: 1,
+    borderRadius: 5,
+    maxHeight: 150,
+    elevation: 5,
+    
+  },
+  suggestion: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+  },
 })
