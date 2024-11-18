@@ -20,6 +20,8 @@ App structure:
    npm install @react-native-google-signin/google-signin 
    npx expo install react-native-maps
    npm install axios
+   npm install react-native-maps @react-native-maps/polyline
+   npm install --save-dev @types/react-native-maps
    ```
 
 2. Start the app

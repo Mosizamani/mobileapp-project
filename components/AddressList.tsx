@@ -11,7 +11,7 @@ export default function AddressList({ addresses }: AddressListProps) {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>No addresses added yet.</Text>
       </View>
-    );
+    )
   }
   return (
     <ScrollView style={styles.container}>
@@ -27,6 +27,7 @@ export default function AddressList({ addresses }: AddressListProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: '100%',
     padding: 10,
   },
   item: {
@@ -36,4 +37,4 @@ const styles = StyleSheet.create({
   },
   emptyContainer: { alignItems: 'center', marginTop: 20 },
   emptyText: { color: '#888' },
-});
+})

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { View, TextInput, Button, StyleSheet } from "react-native"
+import { View, TextInput, Button, StyleSheet, Keyboard } from "react-native"
 
 
 type AddressInputProps = {
@@ -13,6 +13,7 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
     if(address.trim()) {
       onAddAddress(address)
       setAddress('')
+      Keyboard.dismiss()
     }
   }
 
@@ -24,9 +25,9 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
         onChangeText={setAddress}
         style={styles.input}
       />
-      <Button title="Add Address" onPress={handleAddAddress} />
+      <Button title="Add Address" onPress={handleAddAddress} disabled={!address.trim()} />
     </View>
-  );
+  )
 }
 
 
