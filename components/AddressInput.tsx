@@ -3,12 +3,13 @@ import { View, TextInput, Button, StyleSheet, Keyboard, FlatList, TouchableOpaci
 
 
 type AddressInputProps = {
-  onAddAddress: (address: string) => void
+  onAddAddress: (address: string, latitude: number, longitude: number) => void
 }
 
 export default function AddressInput({ onAddAddress }: AddressInputProps) {
   const [address, setAddress] = useState('')
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<{ description: string, place_id: string }[]>([])
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null) 
 
   const GOOGLE_PLACES_API_KEY = "AIzaSyCahYAqH9bRIufClX3irVl7UqSitCFDsC8"
 
@@ -18,32 +19,60 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
       return;
     }
 
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_PLACES_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_PLACES_API_KEY}`
 
     try {
       const response = await fetch(url);
       const data = await response.json();
 
       // Extract address predictions
-      const predictions = data.predictions.map((prediction: any) => prediction.description);
+      const predictions = data.predictions.map((prediction: any) => ({
+        description: prediction.description,
+        place_id: prediction.place_id
+      }))
       setSuggestions(predictions);
     } catch (error) {
       console.error("Error fetching autocomplete suggestions:", error);
     }
   }
 
-  const handleAddAddress = () => {
-    if(address.trim()) {
-      onAddAddress(address)
+  const fetchPlaceDetails = async (placeId: string) => {
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status === "OK") {
+        const location = data.result.geometry.location;
+        return location;
+      } else {
+        console.error("Error fetching place details:", data.status);
+      }
+    } catch (error) {
+      console.error("Error fetching place details:", error);
+    }
+
+    return null;
+  }
+
+  const handleAddAddress = async () => {
+    if(address.trim() && selectedPlaceId) {
+      const location = await fetchPlaceDetails(selectedPlaceId)
+      onAddAddress(address, location.lat, location.lng)
       setAddress('')
       setSuggestions([])
       Keyboard.dismiss()
+
+      // console.log("Selected Address:", address);
+      // console.log(location)
     }
   }
 
-  const handleSelectSuggestion = (selectedAddress: string) => {
-    setAddress(selectedAddress);
-    setSuggestions([]);
+  const handleSelectSuggestion = (selectedAddress: string, placeId: string) => {
+    setAddress(selectedAddress)
+    setSuggestions([])
+    setSelectedPlaceId(placeId)
   }
 
   return (
@@ -62,8 +91,8 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
             data={suggestions}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSelectSuggestion(item)}>
-                <Text style={styles.suggestion}>{item}</Text>
+              <TouchableOpacity onPress={() => handleSelectSuggestion(item.description, item.place_id)}>
+                <Text style={styles.suggestion}>{item.description}</Text>
               </TouchableOpacity>
             )}
             style={styles.suggestionsContainer}

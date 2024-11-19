@@ -5,28 +5,22 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import AppThemeProvider from '@/components/AddThemeProvider'
 import AddressManager from '@/components/AddressManager'
 import OptimizeButton from '@/components/OptimizeButton'
-import MapViewComponent from '@/components/MapViewComponent'
+import MapComponent from '@/components/MapComponent'
 
 
 export default function index() {
 
-  const [addresses, setAddresses] = useState<string[]>([]);
   const [locations, setLocations] = useState<{ lat: number; lng: number; address: string }[]>([]);
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [optimizedRoute, setOptimizedRoute] = useState<{ lat: number; lng: number }[]>([]);
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
-  const handleAddAddress = async (address: string) => {
-    // Use Geocoding API to get lat and lng
-    const API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`
-    );
-    const result = response.data.results[0];
-    const location = result.geometry.location;
 
-    setLocations((prev) => [...prev, { lat: location.lat, lng: location.lng, address }]);
-    setAddresses((prevAddresses) => [...prevAddresses, address]);
-  };
+  const handleAddAddress = (address: string, latitude: number, longitude: number) => {
+    setLocation({ lat: latitude, lng: longitude })
+
+    console.log("Adding address:", address, latitude, longitude)
+  }
 
   const handleOptimizeRoute = async () => {
     const API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
@@ -45,14 +39,15 @@ export default function index() {
     );
 
     setOptimizedRoute(route);
-  };
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <AppThemeProvider>
-        <AddressManager />
+        <AddressManager onAddLocation={handleAddAddress} />
+        {location && (
+        <MapComponent latitude={location.lat} longitude={location.lng} />)}
         <OptimizeButton onOptimize={handleOptimizeRoute}/>
-        <MapViewComponent locations={locations} currentLocation={currentLocation} optimizedRoute={optimizedRoute} />
       </AppThemeProvider>
     </SafeAreaView>
   )

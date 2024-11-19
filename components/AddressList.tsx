@@ -1,8 +1,14 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 
+type Address = {
+  address: string
+  latitude: number
+  longitude: number
+}
+
 type AddressListProps = {
-  addresses: string[]
+  addresses: Address[]
 }
 
 export default function AddressList({ addresses }: AddressListProps) {
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 0.2,
     borderBottomColor: '#ccc',
-    backgroundColor: 'darkred',
+    backgroundColor: 'red',
   },
   emptyContainer: { alignItems: 'center', marginTop: 20 },
   emptyText: { color: '#888' },
