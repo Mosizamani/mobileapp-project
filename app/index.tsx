@@ -6,6 +6,7 @@ import AppThemeProvider from '@/components/AddThemeProvider'
 import AddressManager from '@/components/AddressManager'
 import OptimizeButton from '@/components/OptimizeButton'
 import MapComponent from '@/components/MapComponent'
+import RoutePlanner from '@/components/RoutePlanner'
 
 
 export default function index() {
@@ -47,6 +48,7 @@ export default function index() {
         <AddressManager onAddLocation={handleAddAddress} />
         {location && (
         <MapComponent latitude={location.lat} longitude={location.lng} />)}
+        {currentLocation && <RoutePlanner currentLocation={currentLocation} addresses={locations} />}
         <OptimizeButton onOptimize={handleOptimizeRoute}/>
       </AppThemeProvider>
     </SafeAreaView>
