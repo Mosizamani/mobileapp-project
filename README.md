@@ -22,6 +22,7 @@ App structure:
    npm install axios
    npm install react-native-maps @react-native-maps/polyline
    npm install --save-dev @types/react-native-maps
+   npm install react-native-geolocation-service react-native-maps
    ```
 
 2. Start the app
