@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 0.2,
     borderBottomColor: '#ccc',
-    backgroundColor: 'red',
+    backgroundColor: 'lightgreen',
   },
   emptyContainer: { alignItems: 'center', marginTop: 20 },
   emptyText: { color: '#888' },

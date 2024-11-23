@@ -5,6 +5,7 @@ import AppThemeProvider from '@/components/AddThemeProvider'
 import AddressManager from '@/components/AddressManager'
 import MapComponent from '@/components/MapComponent'
 import OptimizedRoute from '@/components/OptimizedRoute'
+import { Button } from 'react-native'
 
 
 export default function index() {
@@ -15,10 +16,14 @@ export default function index() {
   const handleAddAddress = (address: string, latitude: number, longitude: number) => {
     setLocation({ lat: latitude, lng: longitude })
     setAddresses((prev) => [...prev, { address, latitude, longitude }])
+  console.log("Adding address:", address, latitude, longitude)
+}
 
-    console.log("Adding address:", address, latitude, longitude)
-    console.log()
-  }
+const resetButton = () => {
+  setAddresses([])
+  setLocation(null)
+  console.log("Addresses and location reset.")
+}
 
 
 
@@ -26,6 +31,7 @@ export default function index() {
     <SafeAreaView style={{ flex: 1 }}>
       <AppThemeProvider>
         <AddressManager onAddLocation={handleAddAddress} />
+        <Button title="Reset address" onPress={resetButton} />
         {location && (
         <MapComponent latitude={location.lat} longitude={location.lng} />)}
         {addresses.length > 1 && <OptimizedRoute addresses={addresses} />}

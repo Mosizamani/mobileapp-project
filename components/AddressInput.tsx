@@ -7,6 +7,7 @@ type AddressInputProps = {
 }
 
 export default function AddressInput({ onAddAddress }: AddressInputProps) {
+  
   const [address, setAddress] = useState('')
   const [suggestions, setSuggestions] = useState<{ description: string, place_id: string }[]>([])
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null) 
@@ -63,9 +64,6 @@ export default function AddressInput({ onAddAddress }: AddressInputProps) {
       setAddress('')
       setSuggestions([])
       Keyboard.dismiss()
-
-      // console.log("Selected Address:", address);
-      // console.log(location)
     }
   }
 
